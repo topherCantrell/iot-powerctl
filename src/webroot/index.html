@@ -1,0 +1,64 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Power Control</title>  
+</head>
+
+<body>
+
+<h1>Power Control</h1>
+<p>
+Current relay status: <span id='relay_status'>???</span>
+</p>
+<p>
+<button id='relay_on' onclick='turnRelayOn()'>Relay On</button>
+<button id='relay_off' onClick='turnRelayOff()'>Relay Off</button>
+</p>
+
+<script>
+
+// The goal here is simplicity. Don't judge it too harshly.
+
+function turnRelayOn() {
+	controlRelay(true);
+	document.getElementById('relay_status').innerHTML = 'On';	
+}
+
+function turnRelayOff() {
+	controlRelay(false);
+	document.getElementById('relay_status').innerHTML = 'Off';	
+}
+
+function controlRelay(state) {
+	var xhttp = new XMLHttpRequest();
+	if(state) {
+		state = '/on';
+	} else {
+		state = '/off';
+	}
+	xhttp.open('GET', '/relay'+state, true);
+	xhttp.send();
+}
+
+function checkRelayState() {
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if(this.response=='True') {
+			document.getElementById('relay_status').innerHTML = 'On';
+		} else {
+			document.getElementById('relay_status').innerHTML = 'Off';
+		}		
+	};
+	xhttp.open('GET', '/relay', true);
+	xhttp.send();
+}
+
+checkRelayState();
+
+</script>
+
+</body>
+
+</html>
