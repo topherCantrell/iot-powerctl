@@ -3,6 +3,7 @@ import os
 
 import tornado.ioloop
 import tornado.web
+import socket
 
 import RPi.GPIO as GPIO
 
@@ -13,6 +14,23 @@ GPIO.setup(PIN_POWER_RELAY, GPIO.OUT, initial=GPIO.LOW)
 
 CURRENT_RELAY_VALUE = False
 
+
+# Let others on the network know about us
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(('1.2.3.4', 80))
+ip = s.getsockname()[0]
+s.close()
+notify = ('NOTIFY * HTTP/1.1\r\n' +
+          'HOST: 239.255.255.250:1900\r\n' +
+          'NTS: ssdp:alive\r\n' +
+          'NT: upnp:rootdevice\r\n' +
+          'UUID: ' + socket.getfqdn() + '\r\n' +
+          'LOCATION: http://' + ip + '\r\n')
+#print(notify)
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
+sock.sendto(notify.encode(), ('239.255.255.250', 1900))
+sock.sendto(notify.encode(), ('239.255.255.250', 1900))
 
 def set_power_switch_relay(value):
     global CURRENT_RELAY_VALUE
