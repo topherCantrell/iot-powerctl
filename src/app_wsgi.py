@@ -1,51 +1,70 @@
 import cgi
 import json
 
-def application(environ, start_response):
+#import RPi.GPIO as GPIO
+import ssdp
 
-    if environ['REQUEST_METHOD'] == 'POST':
-        request_body_size = int(environ.get('CONTENT_LENGTH', '0'))
-        request_body = environ['wsgi.input'].read(request_body_size)
-        data = json.loads(request_body.decode())
 
-        if data['state']:
-            # The first command 'start' doesn't have any state
-            game_logic.set_state(data['state'])
+ssdp.send_alive()
 
-        prompts = game_logic.do_command(data['user_command'])
+PIN_POWER_RELAY = 21
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(PIN_POWER_RELAY, GPIO.OUT, initial=GPIO.LOW)
 
-        text = ''
-        audio = []
-        for prompt in prompts:
-            txt = prompt['text']
-            if txt:
-                if txt.endswith('^'):
-                    txt = txt[0:-1]
-                else:
-                    txt = txt + '\n'
-                text = text + txt
-            audio.append(prompt['audio'])
+CURRENT_RELAY_VALUE = False
 
-        ndata = {
-            'text': text,
-            'audio': audio,
-            'state': game_logic.get_state()
-        }
 
-        start_response('200 OK', [('Content-Type', 'application/json')])
-        return [json.dumps(ndata).encode()]
-
+def set_power_switch_relay(value):
+    global CURRENT_RELAY_VALUE
+    CURRENT_RELAY_VALUE = value
+    if value:
+        pass
+        GPIO.output(PIN_POWER_RELAY, GPIO.HIGH)
     else:
-        # If we are running alongside a web server then the server will handle static files.
-        # This is for the stand-alone case (like running on the Farmer Says)
+        pass
+        GPIO.output(PIN_POWER_RELAY, GPIO.LOW)
+    print(value)
+
+
+def _do_static(environ, start_response):
+    try:
         fn = environ['PATH_INFO']
         if fn == '/':
             fn = '/index.html'
-        print('*', fn, '*')
-        with open('public' + fn, 'rb') as f:
+        #print('*', fn, '*')
+        with open('webroot/' + fn, 'rb') as f:
             data = f.read()
-        start_response('200 OK', [('Content-Type', 'text/html')])
+        if fn.endswith('.css'):
+            start_response('200 OK', [('Content-Type', 'text/css')])
+        elif fn.endswith('.js'):
+            start_response('200 OK', [('Content-Type', 'text/js')])
+        else:
+            start_response('200 OK', [('Content-Type', 'text/html')])
         return [data]
+    except:
+        start_response('404 Not found', [('Content-Type', 'text/html')])
+        return [b'']
+
+
+def application(environ, start_response):
+
+    path = environ['PATH_INFO']
+    if not path.startswith('/relay'):
+        return _do_static(environ, start_response)
+
+    if path.endswith('/on'):
+        set_power_switch_relay(True)
+
+    elif path.endswith('/off'):
+        set_power_switch_relay(False)
+
+    else:
+        pass
+        # Ignore
+
+    start_response('200 OK', [('Content-Type', 'text/plain')])
+    return [str(CURRENT_RELAY_VALUE).encode()]
 
 
 if __name__ == '__main__':
