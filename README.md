@@ -1,8 +1,8 @@
 # Web-Enabled Power Strip
 
-Based on [https://www.adafruit.com/product/2935](https://www.adafruit.com/product/2935) and a Raspberry Pi.
+Based on [https://www.adafruit.com/product/2935](https://www.adafruit.com/product/2935) and a Raspberry Pi Zero.
 
-## Controlling with the Pi
+## Controlling with the Pi Zero
 
 You must configure the Raspberry Pi on your network for the first use. Connect a monitor/keyboard/mouse to
 find your DHCP address or to configure your wireless connection. You might want to change the default
