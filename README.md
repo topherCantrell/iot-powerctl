@@ -6,7 +6,6 @@ Based on [https://www.adafruit.com/product/2935](https://www.adafruit.com/produc
 [![](art/adafruit.jpg)](https://www.adafruit.com/) <br>
 https://youtu.be/tN2z2cZIZbc?t=1365
 
-
 ## Controlling with the Pi Zero
 
 You must configure the Raspberry Pi on your network for the first use. Connect a monitor/keyboard/mouse to
