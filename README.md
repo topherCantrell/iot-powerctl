@@ -3,10 +3,9 @@
 Based on [https://www.adafruit.com/product/2935](https://www.adafruit.com/product/2935) and a Raspberry Pi Zero.
 
 ### As seen on Adafruit Show and Tell
-
+![](art/adafruit.jpg) <br>
 https://youtu.be/tN2z2cZIZbc?t=1365
 
-![](art/seen.jpg)
 
 ## Controlling with the Pi Zero
 
