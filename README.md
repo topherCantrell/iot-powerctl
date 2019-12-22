@@ -3,7 +3,7 @@
 Based on [https://www.adafruit.com/product/2935](https://www.adafruit.com/product/2935) and a Raspberry Pi Zero.
 
 ### As seen on Adafruit Show and Tell
-![](art/adafruit.jpg) <br>
+[![](art/adafruit.jpg)](https://www.adafruit.com/) <br>
 https://youtu.be/tN2z2cZIZbc?t=1365
 
 
